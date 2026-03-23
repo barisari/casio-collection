@@ -57,9 +57,7 @@
   .watch-card:hover { border-color: var(--brd2); transform: translateY(-2px); }
   [data-theme="retro"] .watch-card:hover { border-color: var(--ac); box-shadow: 0 0 12px rgba(51,255,51,0.1); }
   .card-img { aspect-ratio: 1; background: var(--surf2); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 14px; }
-  .card-img img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
-  [data-theme="dark"] .card-img, [data-theme="retro"] .card-img { background: #ffffff; }
-  [data-theme="dark"] .card-img img, [data-theme="retro"] .card-img img { mix-blend-mode: multiply; }
+  .card-img img { width: 100%; height: 100%; object-fit: contain;}
   .card-img-ph { font-size: 36px; color: var(--mt); opacity: 0.4; }
   .card-body { padding: 10px 12px; }
   .card-name { font-size: 12px; font-weight: 500; color: var(--tx); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -84,7 +82,7 @@
   [data-theme="retro"] .badge-seri, [data-theme="retro"] .badge-solar, [data-theme="retro"] .badge-bt { background: var(--ac-light); color: var(--ac); border: 1px solid var(--brd2); }
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--surf); border: 1px solid var(--brd2); border-radius: var(--radius); width: 100%; max-width: 440px; overflow: hidden; animation: slideUp 0.2s ease; max-height: 90vh; overflow-y: auto; }
+  .modal { background: var(--surf); border: 1px solid var(--brd2); border-radius: var(--radius); width: 100%; max-width: 90vw; overflow: hidden; animation: slideUp 0.2s ease; max-height: 90vh; overflow-y: auto; }
   [data-theme="retro"] .modal { border-color: var(--ac); box-shadow: 0 0 30px rgba(51,255,51,0.1); }
   @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
   .modal-img { width: 100%; aspect-ratio: 2; background: var(--surf2); display: flex; align-items: center; justify-content: center; padding: 20px; }
