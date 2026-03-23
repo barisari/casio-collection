@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casio Collection</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f6f2;
+    --surf: #ffffff;
+    --surf2: #f0efe9;
+    --brd: rgba(0,0,0,0.08);
+    --brd2: rgba(0,0,0,0.14);
+    --tx: #111111;
+    --mt: #777777;
+    --ac: #1a1a1a;
+    --ac-light: #f0f0ec;
+    --solar: #c47600;
+    --solar-bg: #fff7e6;
+    --bt: #1a56cc;
+    --bt-bg: #eef3ff;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --font: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+  [data-theme="dark"] {
+    --bg: #0f0f0f;
+    --surf: #1a1a1a;
+    --surf2: #222222;
+    --brd: rgba(255,255,255,0.07);
+    --brd2: rgba(255,255,255,0.13);
+    --tx: #efefef;
+    --mt: #888888;
+    --ac: #efefef;
+    --ac-light: #2a2a2a;
+    --solar: #ffaa44;
+    --solar-bg: #2a1f00;
+    --bt: #6699ff;
+    --bt-bg: #0f1a33;
+  }
+  [data-theme="retro"] {
+    --bg: #0c180c;
+    --surf: #0f1f0f;
+    --surf2: #0a160a;
+    --brd: rgba(51,255,51,0.12);
+    --brd2: rgba(51,255,51,0.25);
+    --tx: #33ff33;
+    --mt: #1d8a1d;
+    --ac: #33ff33;
+    --ac-light: rgba(51,255,51,0.1);
+    --solar: #33ff33;
+    --solar-bg: rgba(51,255,51,0.08);
+    --bt: #33ff33;
+    --bt-bg: rgba(51,255,51,0.08);
+    --font: 'DM Mono', monospace;
+    --mono: 'DM Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--tx);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.5;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--surf);
+    border-bottom: 1px solid var(--brd);
+    padding: 0 24px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    color: var(--tx);
+    text-transform: uppercase;
+  }
+
+  [data-theme="retro"] .logo { text-shadow: 0 0 10px rgba(51,255,51,0.5); }
+
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+
+  .seg {
+    display: flex;
+    border: 1px solid var(--brd2);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .seg-btn {
+    padding: 5px 12px;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--brd2);
+    color: var(--mt);
+    font-size: 11px;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .seg-btn:last-child { border-right: none; }
+  .seg-btn.on { background: var(--ac); color: var(--bg); }
+  .seg-btn:hover:not(.on) { color: var(--tx); background: var(--surf2); }
+  [data-theme="retro"] .seg-btn.on { color: #0c180c; }
+
+  .add-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    background: var(--ac);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+  .add-btn:hover { opacity: 0.8; }
+  [data-theme="retro"] .add-btn { color: #0c180c; }
+
+  /* ── CONTENT ── */
+  .content { padding: 24px; max-width: 1200px; margin: 0 auto; }
+
+  .empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--mt);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+  .empty-title { font-size: 16px; font-weight: 500; color: var(--tx); margin-bottom: 6px; }
+  .empty-sub { font-size: 13px; }
+
+  .count { font-family: var(--mono); font-size: 11px; color: var(--mt); margin-bottom: 18px; letter-spacing: 1px; }
+
+  /* ── GRID VIEW ── */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+
+  .watch-card {
+    background: var(--surf);
+    border: 1px solid var(--brd);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .watch-card:hover { border-color: var(--brd2); transform: translateY(-2px); }
+  [data-theme="retro"] .watch-card:hover { border-color: var(--ac); box-shadow: 0 0 12px rgba(51,255,51,0.1); }
+
+  .card-img-box {
+    aspect-ratio: 1;
+    background: var(--surf2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 16px;
+  }
+  .card-img-box img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+  [data-theme="dark"] .card-img-box img, [data-theme="retro"] .card-img-box img { mix-blend-mode: normal; filter: brightness(0.95); }
+  .card-img-ph { font-size: 36px; opacity: 0.3; }
+
+  .card-body { padding: 12px; }
+  .card-name { font-size: 13px; font-weight: 500; color: var(--tx); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-ref { font-family: var(--mono); font-size: 10px; color: var(--mt); margin-bottom: 8px; }
+  .card-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+
+  /* ── LIST VIEW ── */
+  .list { display: flex; flex-direction: column; gap: 6px; }
+
+  .list-row {
+    display: grid;
+    grid-template-columns: 52px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    background: var(--surf);
+    border: 1px solid var(--brd);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .list-row:hover { border-color: var(--brd2); }
+  [data-theme="retro"] .list-row:hover { border-color: var(--ac); }
+
+  .list-thumb {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    background: var(--surf2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .list-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; mix-blend-mode: multiply; }
+  [data-theme="dark"] .list-thumb img, [data-theme="retro"] .list-thumb img { mix-blend-mode: normal; }
+  .list-thumb-ph { font-size: 20px; opacity: 0.3; }
+
+  .list-info { min-width: 0; }
+  .list-name { font-size: 14px; font-weight: 500; color: var(--tx); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .list-ref { font-family: var(--mono); font-size: 10px; color: var(--mt); }
+  .list-badges { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 500;
+    background: var(--ac-light);
+    color: var(--mt);
+    white-space: nowrap;
+  }
+  .badge-solar { background: var(--solar-bg); color: var(--solar); }
+  .badge-bt { background: var(--bt-bg); color: var(--bt); }
+  [data-theme="retro"] .badge, [data-theme="retro"] .badge-solar, [data-theme="retro"] .badge-bt {
+    background: var(--ac-light); color: var(--ac); border: 1px solid var(--brd2);
+  }
+
+  /* ── DETAIL MODAL ── */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .modal-bg.open { display: flex; }
+
+  .modal {
+    background: var(--surf);
+    border: 1px solid var(--brd2);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 440px;
+    overflow: hidden;
+    animation: slideUp 0.2s ease;
+  }
+  [data-theme="retro"] .modal { border-color: var(--ac); box-shadow: 0 0 30px rgba(51,255,51,0.1); }
+
+  @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  .modal-img-box {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    background: var(--surf2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 20px;
+  }
+  .modal-img-box img { max-height: 100%; max-width: 60%; object-fit: contain; mix-blend-mode: multiply; }
+  [data-theme="dark"] .modal-img-box img, [data-theme="retro"] .modal-img-box img { mix-blend-mode: normal; }
+  .modal-img-ph { font-size: 48px; opacity: 0.2; }
+
+  .modal-body { padding: 18px; }
+  .modal-name { font-size: 17px; font-weight: 500; color: var(--tx); margin-bottom: 2px; }
+  .modal-ref { font-family: var(--mono); font-size: 11px; color: var(--mt); margin-bottom: 10px; }
+  .modal-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 16px; }
+
+  .detail-table { width: 100%; border-collapse: collapse; }
+  .detail-table td { padding: 7px 0; border-bottom: 1px solid var(--brd); font-size: 13px; vertical-align: top; }
+  .detail-table tr:last-child td { border-bottom: none; }
+  .detail-table td:first-child { color: var(--mt); width: 45%; }
+  .detail-table td:last-child { color: var(--tx); font-weight: 500; text-align: right; }
+
+  .feature-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 12px; }
+  .feat-tag { font-size: 10px; padding: 3px 9px; border-radius: 20px; background: var(--ac-light); color: var(--mt); }
+  [data-theme="retro"] .feat-tag { border: 1px solid var(--brd2); color: var(--ac); background: transparent; }
+
+  .modal-footer {
+    display: flex;
+    border-top: 1px solid var(--brd);
+  }
+  .modal-close {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    color: var(--mt);
+    font-size: 13px;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .modal-close:hover { background: var(--surf2); color: var(--tx); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--brd2); border-radius: 4px; }
+</style>
+</head>
+<body data-theme="dark">
+
+<div class="topbar">
+  <div class="logo">Casio ◆ Collection</div>
+  <div class="topbar-right">
+    <div class="seg" id="themeCtrl">
+      <button class="seg-btn" onclick="setTheme('light')">light</button>
+      <button class="seg-btn on" onclick="setTheme('dark')">dark</button>
+      <button class="seg-btn" onclick="setTheme('retro')">retro</button>
+    </div>
+    <div class="seg" id="viewCtrl">
+      <button class="seg-btn on" onclick="setView('grid')">grid</button>
+      <button class="seg-btn" onclick="setView('list')">list</button>
+    </div>
+    <button class="add-btn" onclick="promptAdd()">+ saat ekle</button>
+  </div>
+</div>
+
+<div class="content" id="content"></div>
+
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script>
+const DB_KEY = 'casio-collection-v1';
+let watches = [], view = 'grid', theme = 'dark';
+
+function load() {
+  try { watches = JSON.parse(localStorage.getItem(DB_KEY) || '[]'); } catch(e) { watches = []; }
+  render();
+}
+
+function save() { localStorage.setItem(DB_KEY, JSON.stringify(watches)); }
+
+function setTheme(t) {
+  theme = t;
+  document.body.setAttribute('data-theme', t);
+  document.querySelectorAll('#themeCtrl .seg-btn').forEach(b => b.classList.toggle('on', b.textContent === t));
+}
+
+function setView(v) {
+  view = v;
+  document.querySelectorAll('#viewCtrl .seg-btn').forEach(b => b.classList.toggle('on', b.textContent === v));
+  render();
+}
+
+function badgeHtml(w) {
+  const badges = [`<span class="badge">${w.seri}</span>`];
+  if (w.mekanizma) {
+    const m = w.mekanizma.toLowerCase();
+    const cls = m.includes('solar') ? 'badge badge-solar' : m.includes('bluetooth') || m.includes('bt') ? 'badge badge-bt' : 'badge';
+    badges.push(`<span class="${cls}">${w.mekanizma}</span>`);
+  }
+  return badges.join('');
+}
+
+function imgHtml(w, boxCls, phCls) {
+  const url = typeof w === 'string' ? w : w.fotografUrl;
+  const fallback = typeof w === 'object' ? (w.fotografFallback || '') : '';
+  if (!url) return `<div class="${boxCls}"><span class="${phCls}">⌚</span></div>`;
+  const onErr = fallback
+    ? `this.src='${fallback}';this.onerror=function(){this.parentElement.innerHTML='<span class=${phCls}>⌚</span>';};`
+    : `this.parentElement.innerHTML='<span class=${phCls}>⌚</span>';`;
+  return `<div class="${boxCls}"><img src="${url}" onerror="${onErr}"></div>`;
+}
+
+function render() {
+  const el = document.getElementById('content');
+  if (!watches.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">⌚</div><div class="empty-title">Koleksiyon henüz boş</div><div class="empty-sub">Saati eklemek için yukarıdaki butona tıkla</div></div>`;
+    return;
+  }
+
+  let html = `<div class="count">${watches.length} SAAT</div>`;
+
+  if (view === 'grid') {
+    html += `<div class="grid">` + watches.map(w => `
+      <div class="watch-card" onclick="openModal('${w.id}')">
+        ${imgHtml(w, 'card-img-box', 'card-img-ph')}
+        <div class="card-body">
+          <div class="card-name">${w.modelAdi}</div>
+          <div class="card-ref">${w.referansNo}</div>
+          <div class="card-badges">${badgeHtml(w)}</div>
+        </div>
+      </div>`).join('') + `</div>`;
+  } else {
+    html += `<div class="list">` + watches.map(w => `
+      <div class="list-row" onclick="openModal('${w.id}')">
+        ${imgHtml(w, 'list-thumb', 'list-thumb-ph')}
+        <div class="list-info">
+          <div class="list-name">${w.modelAdi}</div>
+          <div class="list-ref">${w.referansNo}</div>
+        </div>
+        <div class="list-badges">${badgeHtml(w)}</div>
+      </div>`).join('') + `</div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+function openModal(id) {
+  const w = watches.find(x => x.id === id);
+  if (!w) return;
+
+  const rows = [
+    w.tarih && ['Satın alma tarihi', w.tarih],
+    w.satisFiyati && ['Satın alma fiyatı', w.satisFiyati + ' ₺'],
+    w.piyasaDegeri && ['Piyasa değeri', w.piyasaDegeri + ' ₺'],
+    w.aciklama && ['Açıklama', w.aciklama],
+  ].filter(Boolean);
+
+  const tableHtml = rows.length ? `<table class="detail-table">${rows.map(([l,v]) => `<tr><td>${l}</td><td>${v}</td></tr>`).join('')}</table>` : '';
+  const tagsHtml = (w.ozellikler||[]).length ? `<div class="feature-tags">${w.ozellikler.map(f => `<span class="feat-tag">${f}</span>`).join('')}</div>` : '';
+
+  const imgBx = imgHtml(w, 'modal-img-box', 'modal-img-ph');
+
+  document.getElementById('modal').innerHTML = `
+    ${imgBx}
+    <div class="modal-body">
+      <div class="modal-name">${w.modelAdi}</div>
+      <div class="modal-ref">${w.referansNo}</div>
+      <div class="modal-badges">${badgeHtml(w)}</div>
+      ${tableHtml}
+      ${tagsHtml}
+    </div>
+    <div class="modal-footer">
+      <button class="modal-close" onclick="closeModal()">kapat</button>
+    </div>`;
+
+  document.getElementById('modalBg').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+
+function promptAdd() {
+  const name = prompt('Model adı veya referans numarası:');
+  if (name) alert('Bu saat için Claude\'a sor: "' + name + '" modelini koleksiyonuma ekle');
+}
+
+window.addWatch = function(data) {
+  watches.push({ id: Date.now().toString(), ...data });
+  save();
+  render();
+};
+
+window.clearAll = function() { watches = []; save(); render(); };
+
+const INITIAL_WATCHES = [
+  {
+    id: '1',
+    modelAdi: 'Casio A158WA',
+    referansNo: 'A158WA-1DF',
+    seri: 'Vintage / Retro',
+    mekanizma: 'Quartz',
+    tarih: '',
+    fotografUrl: 'https://www.casio.com/content/dam/casio/product-info/locales/in/en/timepiece/product/watch/A/A1/A15/a158wa-1/assets/A158WA-1.png',
+    fotografFallback: 'https://img.ersacloud.com/product/l/A158WA-1DF_2.jpg',
+    ozellikler: ['1/100 sn Kronometre', 'LED Aydınlatma', 'Günlük Alarm', 'Otomatik Takvim', '12/24 Saat', 'Su Direnci 30m', '7 Yıl Pil (CR2016)', 'Paslanmaz Çelik'],
+    aciklama: "1989'dan bu yana ikonik Casio Vintage. 36.8 × 33.2 × 8.2 mm, 46g."
+  },
+  {
+    id: '2',
+    modelAdi: 'Casio F-91WPC Pac-Man',
+    referansNo: 'F-91WPC-1ADR',
+    seri: 'Vintage / Retro',
+    mekanizma: 'Quartz',
+    tarih: '',
+    fotografUrl: 'https://www.casio.com/content/dam/casio/product-info/locales/in/en/timepiece/product/watch/F/F-9/F-91/f-91wpc-1a/assets/F-91WPC-1A.png',
+    fotografFallback: 'https://img.ersacloud.com/product/l/F-91WPC-1ADR.jpg',
+    ozellikler: ['1/100 sn Kronometre', 'LED Aydınlatma', 'Günlük Alarm', 'Saatlik Sinyal', 'Su Direnci', '7 Yıl Pil (CR2016)', 'Bio-bazlı Reçine Kordon', 'Pac-Man Özel Seri'],
+    aciklama: "Pac-Man iş birliği özel seri. 38.2 × 35.2 × 8.5 mm, 21g."
+  }
+];
+
+function loadWithDefaults() {
+  try { watches = JSON.parse(localStorage.getItem(DB_KEY) || '[]'); } catch(e) { watches = []; }
+  if (watches.length === 0) { watches = INITIAL_WATCHES; save(); }
+  render();
+}
+
+loadWithDefaults();
+</script>
+</body>
+</html>
