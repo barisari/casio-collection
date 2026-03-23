@@ -31,12 +31,11 @@
     --font: 'DM Mono', monospace;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; }
-  body { background: var(--bg); color: var(--tx); font-family: var(--font); font-size: 14px; transition: background 0.3s, color 0.3s; }
+  body { background: var(--bg); color: var(--tx); font-family: var(--font); font-size: 14px; transition: background 0.3s, color 0.3s; min-height: 100vh; }
   .topbar { position: sticky; top: 0; z-index: 100; background: var(--surf); border-bottom: 1px solid var(--brd); padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .logo { font-family: var(--mono); font-size: 13px; font-weight: 500; letter-spacing: 3px; color: var(--tx); }
   [data-theme="retro"] .logo { text-shadow: 0 0 10px rgba(51,255,51,0.4); }
-  .topbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
   .seg { display: flex; border: 1px solid var(--brd2); border-radius: var(--radius-sm); overflow: hidden; }
   .seg button { padding: 5px 12px; background: transparent; border: none; border-right: 1px solid var(--brd2); color: var(--mt); font-size: 11px; font-family: var(--font); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
   .seg button:last-child { border-right: none; }
@@ -83,7 +82,7 @@
   [data-theme="retro"] .badge-seri, [data-theme="retro"] .badge-solar, [data-theme="retro"] .badge-bt { background: var(--ac-light); color: var(--ac); border: 1px solid var(--brd2); }
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--surf); border: 1px solid var(--brd2); border-radius: var(--radius); width: 100%; max-width: 440px; overflow: hidden; animation: slideUp 0.2s ease; }
+  .modal { background: var(--surf); border: 1px solid var(--brd2); border-radius: var(--radius); width: 100%; max-width: 440px; overflow: hidden; animation: slideUp 0.2s ease; max-height: 90vh; overflow-y: auto; }
   [data-theme="retro"] .modal { border-color: var(--ac); box-shadow: 0 0 30px rgba(51,255,51,0.1); }
   @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
   .modal-img { width: 100%; aspect-ratio: 2; background: var(--surf2); display: flex; align-items: center; justify-content: center; padding: 20px; }
@@ -104,14 +103,19 @@
   [data-theme="retro"] .feat-tag { border: 1px solid var(--brd2); color: var(--ac); background: transparent; }
   .modal-close { width: 100%; padding: 12px; background: transparent; border: none; border-top: 1px solid var(--brd); color: var(--mt); font-size: 13px; font-family: var(--font); cursor: pointer; }
   .modal-close:hover { background: var(--surf2); color: var(--tx); }
+  .loading { text-align: center; padding: 80px 20px; color: var(--mt); font-family: var(--mono); font-size: 12px; letter-spacing: 2px; }
   .empty { text-align: center; padding: 80px 20px; color: var(--mt); }
   .empty-icon { font-size: 48px; margin-bottom: 14px; opacity: 0.3; }
   .empty-title { font-size: 15px; font-weight: 500; color: var(--tx); margin-bottom: 6px; }
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-thumb { background: var(--brd2); border-radius: 4px; }
+
+  /* Dinamik sütunlar için modal extra alanlar */
+  .extra-fields { margin-top: 8px; }
 </style>
 </head>
 <body data-theme="dark">
+
 <div class="topbar">
   <div class="logo">Casio ◆ Collection</div>
   <div class="topbar-right">
@@ -126,50 +130,86 @@
     </div>
   </div>
 </div>
+
 <div class="content">
   <div class="filters">
     <div class="filters-left">
       <input class="search-input" id="searchInput" placeholder="ara..." oninput="applyFilters()">
-      <div class="seg" id="seriCtrl">
-        <button class="on" onclick="setSeri('')">tümü</button>
-        <button onclick="setSeri('G-Shock')">G-Shock</button>
-        <button onclick="setSeri('Vintage / Retro')">vintage</button>
-        <button onclick="setSeri('Edifice')">edifice</button>
-      </div>
+      <div class="seg" id="seriCtrl"></div>
     </div>
     <div class="filters-right">
       <span class="count" id="countEl"></span>
       <button class="csv-btn" onclick="exportCSV()">CSV indir</button>
     </div>
   </div>
-  <div id="watchList"></div>
+  <div id="watchList"><div class="loading">YÜKLENİYOR...</div></div>
 </div>
+
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal" id="modalBox"></div>
 </div>
-<script>
-const WATCHES = [
-  { id:'1', modelAdi:'Casio A158WA', referansNo:'A158WA-1DF', seri:'Vintage / Retro', mekanizma:'Quartz', kasaMalzeme:'Paslanmaz Çelik', kadranRengi:'Gümüş', kayisRengi:'Gümüş', camTipi:'Mineral', ozellikler:['Kronometre','LED','Alarm','Otomatik Takvim','Su Direnci 30m','7 Yıl Pil'], fotografUrl:'https://img.ersacloud.com/product/l/A158WA-1DF_2.jpg' },
-  { id:'2', modelAdi:'Casio F-91WPC Pac-Man', referansNo:'F-91WPC-1ADR', seri:'Vintage / Retro', mekanizma:'Quartz', kasaMalzeme:'Reçine', kadranRengi:'Siyah', kayisRengi:'Siyah', camTipi:'Mineral', ozellikler:['Kronometre','LED','Alarm','Su Direnci','7 Yıl Pil','Pac-Man Özel Seri'], fotografUrl:'https://img.ersacloud.com/product/l/F-91WPC-1ADR.jpg' },
-  { id:'3', modelAdi:'Casio A1000DN', referansNo:'A1000DN-7ER', seri:'Vintage / Retro', mekanizma:'Quartz', kasaMalzeme:'Paslanmaz Çelik', kadranRengi:'Gümüş', kayisRengi:'Gümüş', camTipi:'Mineral', ozellikler:['Kronometre','LED','Alarm','Dünya Saati','Otomatik Takvim','Su Direnci 30m'], fotografUrl:'https://www.casio.com/content/dam/casio/product-info/locales/in/en/timepiece/product/watch/A/A1/A10/a1000dn-7/assets/A1000DN-7.png' },
-  { id:'4', modelAdi:'Casio A1100D', referansNo:'A1100D-1DF', seri:'Vintage / Retro', mekanizma:'Quartz', kasaMalzeme:'Paslanmaz Çelik', kadranRengi:'Gümüş', kayisRengi:'Gümüş', camTipi:'Mineral', ozellikler:['Kronometre','LED','Alarm','Otomatik Takvim','Su Direnci 30m'], fotografUrl:'https://img.ersacloud.com/product/l/A1100D-1DF.jpg' },
-  { id:'5', modelAdi:'Casio A1100B', referansNo:'A1100B-1DF', seri:'Vintage / Retro', mekanizma:'Quartz', kasaMalzeme:'Paslanmaz Çelik', kadranRengi:'Siyah', kayisRengi:'Siyah', camTipi:'Mineral', ozellikler:['Kronometre','LED','Alarm','Otomatik Takvim','Su Direnci 30m'], fotografUrl:'https://img.ersacloud.com/product/l/A1100B-1DF.jpg' },
-  { id:'6', modelAdi:'Casio DBC-611', referansNo:'DBC-611-1DF', seri:'Vintage / Retro', mekanizma:'Quartz', kasaMalzeme:'Paslanmaz Çelik', kadranRengi:'Gümüş', kayisRengi:'Gümüş', camTipi:'Mineral', ozellikler:['Telememo 25','Kronometre','Dual Time','5 Alarm','Auto LED','Su Direnci 30m'], fotografUrl:'https://img.ersacloud.com/product/l/DBC-611-1DF.jpg' },
-  { id:'7', modelAdi:'Casio CA-53W', referansNo:'CA-53W-1Z', seri:'Vintage / Retro', mekanizma:'Quartz', kasaMalzeme:'Reçine', kadranRengi:'Gri', kayisRengi:'Gri', camTipi:'Mineral', ozellikler:['Hesap Makinesi','Kronometre','Alarm','Su Direnci 30m','7 Yıl Pil'], fotografUrl:'https://img.ersacloud.com/product/l/CA-53W-1Z.jpg' },
-  { id:'8', modelAdi:'Casio AE-1200WHL', referansNo:'AE-1200WHL-5AVDF', seri:'Vintage / Retro', mekanizma:'Quartz', kasaMalzeme:'Reçine', kadranRengi:'Yeşil', kayisRengi:'Yeşil', camTipi:'Mineral', ozellikler:['Dünya Saati','Kronometre','5 Alarm','LED','Su Direnci 100m','10 Yıl Pil'], fotografUrl:'https://img.ersacloud.com/product/l/AE-1200WHL-5AVDF.jpg' },
-  { id:'9', modelAdi:'Casio GA-2100', referansNo:'GA-2100-1A1DR', seri:'G-Shock', mekanizma:'Quartz', kasaMalzeme:'Carbon Core Guard + Reçine', kadranRengi:'Siyah', kayisRengi:'Siyah', camTipi:'Mineral', ozellikler:['Analog-Digital','Şok Direnci','Su Direnci 200m','Dünya Saati','Kronometre','LED'], fotografUrl:'https://img.ersacloud.com/product/l/GA-2100-1A1DR.jpg' },
-  { id:'10', modelAdi:'Casio GBD-200', referansNo:'GBD-200-1DR', seri:'G-Shock', mekanizma:'Quartz', kasaMalzeme:'Reçine', kadranRengi:'Siyah', kayisRengi:'Siyah', camTipi:'Mineral', ozellikler:['Bluetooth','Adım Sayar','Mesafe Takibi','Şok Direnci','Su Direnci 200m','MIP Ekran'], fotografUrl:'https://img.ersacloud.com/product/l/GBD-200-1DR.jpg' },
-  { id:'11', modelAdi:'Casio GBX-100', referansNo:'GBX-100-8DR', seri:'G-Shock', mekanizma:'Quartz', kasaMalzeme:'Reçine', kadranRengi:'Gümüş/Gri', kayisRengi:'Gri', camTipi:'Mineral', ozellikler:['Bluetooth','Sörf Metrikleri','Tide Graph','Şok Direnci','Su Direnci 200m','MIP Ekran'], fotografUrl:'https://img.ersacloud.com/product/l/GBX-100-8DR.jpg' },
-  { id:'12', modelAdi:'Casio GW-BX5600', referansNo:'GW-BX5600-1A1DR', seri:'G-Shock', mekanizma:'Tough Solar', kasaMalzeme:'Reçine', kadranRengi:'Siyah', kayisRengi:'Siyah', camTipi:'Mineral', ozellikler:['Tough Solar','Bluetooth','Atomic Timekeeping','MIP Ekran','Şok Direnci','Su Direnci 200m'], fotografUrl:'https://img.ersacloud.com/product/l/GW-BX5600-1A1DR.jpg' },
-  { id:'13', modelAdi:'Casio DW-6900RGM', referansNo:'DW-6900RGM-5DR', seri:'G-Shock', mekanizma:'Quartz', kasaMalzeme:'Reçine', kadranRengi:'Sarı/Yeşil', kayisRengi:'Sarı', camTipi:'Mineral', ozellikler:['Triple Graph','Şok Direnci','Su Direnci 200m','EL Aydınlatma','Kronometre','5 Alarm'], fotografUrl:'https://img.ersacloud.com/product/l/DW-6900RGM-5DR.jpg' },
-  { id:'14', modelAdi:'Casio GM-B2100D', referansNo:'GM-B2100D-1ADR', seri:'G-Shock', mekanizma:'Tough Solar', kasaMalzeme:'Paslanmaz Çelik (Full Metal)', kadranRengi:'Siyah', kayisRengi:'Siyah Metal', camTipi:'Safir', ozellikler:['Tough Solar','Bluetooth','Full Metal','Analog-Digital','Şok Direnci','Su Direnci 200m'], fotografUrl:'https://img.ersacloud.com/product/l/GM-B2100D-1ADR.jpg' },
-  { id:'15', modelAdi:'Casio GST-B1000D', referansNo:'GST-B1000D-2ADR', seri:'G-Shock', mekanizma:'Tough Solar', kasaMalzeme:'Paslanmaz Çelik + Karbon', kadranRengi:'Mavi', kayisRengi:'Gümüş Metal', camTipi:'Safir', ozellikler:['Tough Solar','Bluetooth','Atomic Timekeeping','Analog-Digital','Su Direnci 200m','Şok Direnci'], fotografUrl:'https://img.ersacloud.com/product/l/GST-B1000D-2ADR.jpg' },
-  { id:'16', modelAdi:'Casio EFS-S570D', referansNo:'EFS-S570D-3AUDF', seri:'Edifice', mekanizma:'Tough Solar', kasaMalzeme:'Paslanmaz Çelik', kadranRengi:'Yeşil', kayisRengi:'Gümüş Metal', camTipi:'Safir', ozellikler:['Tough Solar','Kronograf','Safir Cam','Su Direnci 100m','Neo Display','İnce Tasarım 9.7mm'], fotografUrl:'https://img.ersacloud.com/product/l/EFS-S570D-3AUDF.jpg' },
-  { id:'17', modelAdi:'Casio EFB-730D', referansNo:'EFB-730D-7AVUDF', seri:'Edifice', mekanizma:'Quartz', kasaMalzeme:'Paslanmaz Çelik', kadranRengi:'Gümüş/Siyah', kayisRengi:'Gümüş Metal', camTipi:'Safir', ozellikler:['Kronograf','Safir Cam','Su Direnci 100m','Tarih','1 Sn Kronometre'], fotografUrl:'https://img.ersacloud.com/product/l/EFB-730D-7AVUDF.jpg' },
-  { id:'18', modelAdi:'Casio MDV-106', referansNo:'MDV-106-1AVDF', seri:'G-Shock', mekanizma:'Quartz', kasaMalzeme:'Reçine', kadranRengi:'Siyah', kayisRengi:'Siyah', camTipi:'Mineral', ozellikler:['Dalgıç Saati','Su Direnci 200m','Luminescent','Unidirectional Bezel','Tarih','Screw Lock Crown'], fotografUrl:'https://img.ersacloud.com/product/l/MDV-106-1AVDF.jpg' },
-];
 
-let allWatches = WATCHES, filtered = [], view = 'grid', activeSeri = '';
+<script>
+// CSV'deki özel sütunlar — bunlar ayrı alanda gösterilir
+const CORE_COLS = ['modelAdi','referansNo','seri','mekanizma','kasaMalzeme','kadranRengi','kayisRengi','camTipi','tarih','ozellikler','fotografUrl'];
+const HIDDEN_IN_MODAL = ['modelAdi','referansNo','fotografUrl','ozellikler'];
+const COL_LABELS = {
+  seri: 'Seri', mekanizma: 'Mekanizma', kasaMalzeme: 'Kasa',
+  kadranRengi: 'Kadran', kayisRengi: 'Kayış', camTipi: 'Cam', tarih: 'Satın alma'
+};
+
+let allWatches = [], filtered = [], headers = [], view = 'grid', activeSeri = '';
+
+// CSV parser — virgül ve tırnak işaretlerini doğru handle eder
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const hdrs = lines[0].split(',').map(h => h.trim());
+  const watches = [];
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const vals = parseCSVLine(lines[i]);
+    const obj = {};
+    hdrs.forEach((h, idx) => { obj[h] = vals[idx] || ''; });
+    obj._id = i;
+    // Özellikler pipe ile ayrılmış
+    if (obj.ozellikler) obj.ozellikler = obj.ozellikler.split('|').map(s => s.trim()).filter(Boolean);
+    watches.push(obj);
+  }
+  return { hdrs, watches };
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+    else { cur += c; }
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+async function loadCSV() {
+  try {
+    const res = await fetch('data.csv?t=' + Date.now());
+    const text = await res.text();
+    const { hdrs, watches } = parseCSV(text);
+    headers = hdrs;
+    allWatches = watches;
+    buildSeriFilter();
+    applyFilters();
+  } catch(e) {
+    document.getElementById('watchList').innerHTML = `<div class="empty"><div class="empty-icon">⌚</div><div class="empty-title">data.csv yüklenemedi</div></div>`;
+  }
+}
+
+function buildSeriFilter() {
+  const seriler = ['', ...new Set(allWatches.map(w => w.seri).filter(Boolean))];
+  const ctrl = document.getElementById('seriCtrl');
+  ctrl.innerHTML = seriler.map(s => `<button ${!s?'class="on"':''} onclick="setSeri('${s}')">${s||'tümü'}</button>`).join('');
+}
 
 function setTheme(t) {
   document.body.setAttribute('data-theme', t);
@@ -190,72 +230,104 @@ function applyFilters() {
   const q = document.getElementById('searchInput').value.toLowerCase();
   filtered = allWatches.filter(w => {
     const matchSeri = !activeSeri || w.seri === activeSeri;
-    const matchQ = !q || w.modelAdi.toLowerCase().includes(q) || w.referansNo.toLowerCase().includes(q);
+    const matchQ = !q || (w.modelAdi||'').toLowerCase().includes(q) || (w.referansNo||'').toLowerCase().includes(q);
     return matchSeri && matchQ;
   });
   document.getElementById('countEl').textContent = filtered.length + ' saat';
   render();
 }
+
 function badgesFor(w) {
-  let h = `<span class="badge badge-seri">${w.seri}</span>`;
+  let h = `<span class="badge badge-seri">${w.seri||''}</span>`;
   if (w.mekanizma === 'Tough Solar') h += `<span class="badge badge-solar">Tough Solar</span>`;
-  if (w.ozellikler?.includes('Bluetooth')) h += `<span class="badge badge-bt">Bluetooth</span>`;
+  if (Array.isArray(w.ozellikler) && w.ozellikler.includes('Bluetooth')) h += `<span class="badge badge-bt">Bluetooth</span>`;
   return h;
 }
+
 function imgEl(w, boxCls, phCls) {
   if (!w.fotografUrl) return `<div class="${boxCls}"><span class="${phCls}">⌚</span></div>`;
   return `<div class="${boxCls}"><img src="${w.fotografUrl}" onerror="this.parentElement.innerHTML='<span class=${phCls}>⌚</span>'"></div>`;
 }
+
 function render() {
   const el = document.getElementById('watchList');
   if (!filtered.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">⌚</div><div class="empty-title">Sonuç bulunamadı</div></div>`; return; }
   if (view === 'grid') {
     el.innerHTML = `<div class="grid">${filtered.map(w => `
-      <div class="watch-card" onclick="openModal('${w.id}')">
+      <div class="watch-card" onclick="openModal(${w._id})">
         ${imgEl(w,'card-img','card-img-ph')}
         <div class="card-body">
-          <div class="card-name">${w.modelAdi}</div>
-          <div class="card-ref">${w.referansNo}</div>
+          <div class="card-name">${w.modelAdi||''}</div>
+          <div class="card-ref">${w.referansNo||''}</div>
           <div class="card-badges">${badgesFor(w)}</div>
         </div>
       </div>`).join('')}</div>`;
   } else {
     el.innerHTML = `<div class="list">${filtered.map(w => `
-      <div class="list-row" onclick="openModal('${w.id}')">
+      <div class="list-row" onclick="openModal(${w._id})">
         ${imgEl(w,'list-thumb','list-thumb-ph')}
         <div class="list-info">
-          <div class="list-name">${w.modelAdi}</div>
-          <div class="list-ref">${w.referansNo}</div>
+          <div class="list-name">${w.modelAdi||''}</div>
+          <div class="list-ref">${w.referansNo||''}</div>
         </div>
         <div class="list-right">${badgesFor(w)}</div>
       </div>`).join('')}</div>`;
   }
 }
+
 function openModal(id) {
-  const w = allWatches.find(x => x.id === id); if (!w) return;
-  const rows = [['Seri', w.seri], ['Mekanizma', w.mekanizma], ['Kasa', w.kasaMalzeme], ['Kadran', w.kadranRengi], ['Kayış', w.kayisRengi], ['Cam', w.camTipi], ...(w.tarih ? [['Satın alma', w.tarih]] : [])];
-  const imgBox = w.fotografUrl ? `<div class="modal-img"><img src="${w.fotografUrl}" onerror="this.parentElement.innerHTML='<span class=modal-img-ph>⌚</span>'"></div>` : `<div class="modal-img"><span class="modal-img-ph">⌚</span></div>`;
+  const w = allWatches.find(x => x._id === id); if (!w) return;
+
+  // Sabit alanlar
+  const coreRows = Object.entries(COL_LABELS)
+    .filter(([k]) => w[k])
+    .map(([k, label]) => `<tr><td>${label}</td><td>${w[k]}</td></tr>`).join('');
+
+  // CSV'de sonradan eklenen ekstra sütunlar (CORE_COLS dışındakiler)
+  const extraRows = headers
+    .filter(h => !CORE_COLS.includes(h) && w[h])
+    .map(h => `<tr><td>${h}</td><td>${w[h]}</td></tr>`).join('');
+
+  const imgBox = w.fotografUrl
+    ? `<div class="modal-img"><img src="${w.fotografUrl}" onerror="this.parentElement.innerHTML='<span class=modal-img-ph>⌚</span>'"></div>`
+    : `<div class="modal-img"><span class="modal-img-ph">⌚</span></div>`;
+
+  const tags = Array.isArray(w.ozellikler) && w.ozellikler.length
+    ? `<div class="feat-tags">${w.ozellikler.map(f=>`<span class="feat-tag">${f}</span>`).join('')}</div>` : '';
+
   document.getElementById('modalBox').innerHTML = `
     ${imgBox}
     <div class="modal-body">
-      <div class="modal-name">${w.modelAdi}</div>
-      <div class="modal-ref">${w.referansNo}</div>
+      <div class="modal-name">${w.modelAdi||''}</div>
+      <div class="modal-ref">${w.referansNo||''}</div>
       <div class="modal-badges">${badgesFor(w)}</div>
-      <table class="detail-table">${rows.map(([l,v])=>`<tr><td>${l}</td><td>${v}</td></tr>`).join('')}</table>
-      ${w.ozellikler?.length ? `<div class="feat-tags">${w.ozellikler.map(f=>`<span class="feat-tag">${f}</span>`).join('')}</div>` : ''}
+      <table class="detail-table">${coreRows}${extraRows}</table>
+      ${tags}
     </div>
     <button class="modal-close" onclick="closeModal()">kapat</button>`;
   document.getElementById('modalOverlay').classList.add('open');
 }
+
 function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
 function exportCSV() {
-  const cols = ['modelAdi','referansNo','seri','mekanizma','kasaMalzeme','kadranRengi','kayisRengi','camTipi','tarih','ozellikler','fotografUrl'];
-  const csv = [cols.join(','), ...allWatches.map(w => cols.map(c => { const v = Array.isArray(w[c]) ? w[c].join(' | ') : (w[c]||''); return `"${String(v).replace(/"/g,'""')}"`;}).join(','))].join('\n');
-  const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv); a.download = 'casio-koleksiyon.csv'; a.click();
+  const rows = [headers.join(',')];
+  allWatches.forEach(w => {
+    rows.push(headers.map(h => {
+      const v = Array.isArray(w[h]) ? w[h].join(' | ') : (w[h]||'');
+      return `"${String(v).replace(/"/g,'""')}"`;
+    }).join(','));
+  });
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(rows.join('\n'));
+  a.download = 'casio-koleksiyon.csv';
+  a.click();
 }
+
+// Init
 const savedTheme = localStorage.getItem('casio-theme') || 'dark';
 setTheme(savedTheme);
-applyFilters();
+loadCSV();
 </script>
 </body>
 </html>
