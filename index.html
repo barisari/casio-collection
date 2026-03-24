@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASIO Collection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f2f2f2;
+    --surf: #ffffff;
+    --surf2: #f2f2f2;
+    --surf3: #e5e5ea;
+    --tx: #1c1c1e;
+    --tx2: #4a4a4e;
+    --tx3: #6e6e73;
+    --solar: #a63d00;
+    --solar-bg: #fff2e5;
+    --bt: #0058b8;
+    --bt-bg: #e5f0fc;
+    --brd: rgba(0,0,0,0.07);
+    --brd2: rgba(0,0,0,0.12);
+    --radius: 16px;
+    --radius-sm: 12px;
+    --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'DM Mono', 'SF Mono', monospace;
+  }
+  [data-theme="dark"] {
+    --bg: #000000;
+    --surf: #242424;
+    --surf2: #1c1c1c;
+    --surf3: #3a3a3c;
+    --tx: #f5f5f7;
+    --tx2: #aeaeb2;
+    --tx3: #8e8e93;
+    --solar: #ff9f0a;
+    --solar-bg: #291800;
+    --bt: #409cff;
+    --bt-bg: #001e3c;
+    --brd: rgba(255,255,255,0.07);
+    --brd2: rgba(255,255,255,0.12);
+  }
+  [data-theme="retro"] {
+    --bg: #080d08;
+    --surf: #0d140d;
+    --surf2: #111811;
+    --surf3: #182018;
+    --tx: #33ff33;
+    --tx2: #26bf26;
+    --tx3: #1a941a;
+    --solar: #33ff33;
+    --solar-bg: rgba(51,255,51,0.07);
+    --bt: #33ff33;
+    --bt-bg: rgba(51,255,51,0.07);
+    --brd: rgba(51,255,51,0.09);
+    --brd2: rgba(51,255,51,0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--tx);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    transition: background 0.25s, color 0.25s;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    height: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px;
+    background: rgba(242,242,242,0.88);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 0.5px solid var(--brd2);
+    transition: background 0.25s;
+  }
+  [data-theme="dark"] .topbar { background: rgba(0,0,0,0.82); }
+  [data-theme="retro"] .topbar { background: rgba(8,13,8,0.92); }
+
+  .logo {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    color: var(--tx);
+    text-transform: uppercase;
+    user-select: none;
+  }
+  [data-theme="retro"] .logo { text-shadow: 0 0 16px rgba(51,255,51,0.45); }
+
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+
+  .seg {
+    display: flex;
+    background: var(--surf2);
+    border: 0.5px solid var(--brd2);
+    border-radius: 22px;
+    padding: 3px;
+    gap: 1px;
+  }
+  .seg button {
+    padding: 4px 13px;
+    border: none; border-radius: 18px;
+    background: transparent;
+    color: var(--tx2);
+    font-size: 11px; font-weight: 500;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .seg button svg { display: block; }
+  .seg button:has(svg) { padding: 4px 10px; }
+  .seg button.on {
+    background: var(--tx);
+    color: var(--bg);
+    box-shadow: none;
+  }
+  [data-theme="dark"] .seg button.on { box-shadow: none; }
+  .seg button:hover:not(.on) { color: var(--tx); }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 44px 32px 0;
+  }
+  .page-title {
+    font-size: clamp(28px, 3.5vw, 40px);
+    font-weight: 600;
+    color: var(--tx);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    max-width: 1920px;
+    margin: 0 auto 28px;
+    padding: 20px 32px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-bottom: 0.5px solid var(--brd2);
+  }
+  .filter-left { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .filter-right { display: flex; align-items: center; gap: 8px; }
+
+  .filter-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .ftab {
+    padding: 6px 16px;
+    border: 0.5px solid var(--brd2);
+    border-radius: 22px;
+    background: transparent;
+    color: var(--tx2);
+    font-size: 12px; font-weight: 500;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .ftab.on { background: var(--tx); color: var(--bg); border-color: var(--tx); }
+  .ftab:hover:not(.on) { background: var(--surf2); color: var(--tx); }
+
+  .search-wrap { position: relative; display: flex; align-items: center; }
+  .search-ico {
+    position: absolute; left: 10px;
+    width: 13px; height: 13px; color: var(--tx3);
+    pointer-events: none; flex-shrink: 0;
+  }
+  .search-input {
+    padding: 6px 12px 6px 28px;
+    border: 0.5px solid var(--brd2);
+    border-radius: 22px;
+    background: var(--surf);
+    color: var(--tx);
+    font-size: 12px; font-family: var(--font);
+    outline: none; width: 170px;
+    transition: border-color 0.18s, width 0.25s ease;
+  }
+  .search-input:focus { border-color: var(--tx3); width: 210px; }
+  .search-input::placeholder { color: var(--tx3); }
+
+  .count-lbl {
+    font-size: 11px; color: var(--tx3);
+    font-family: var(--font);
+    white-space: nowrap;
+  }
+  .sort-select {
+    padding: 6px 28px 6px 12px;
+    border: 0.5px solid var(--brd2); border-radius: 22px;
+    background: var(--surf); color: var(--tx2);
+    font-size: 11px; font-family: var(--font);
+    cursor: pointer; outline: none;
+    transition: all 0.18s;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238e8e93' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+  .sort-select:hover { color: var(--tx); border-color: var(--tx3); }
+
+  .icon-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px;
+    background: transparent; border: none;
+    color: var(--tx3); cursor: pointer;
+    transition: color 0.15s;
+  }
+  .icon-btn:hover { color: var(--tx); }
+  .icon-btn.on { color: var(--tx); }
+  .export-btn {
+    border: 0.5px solid var(--brd2);
+    border-radius: var(--radius-sm);
+    width: 32px; height: 32px;
+  }
+  .export-btn:hover { background: var(--surf2); color: var(--tx); }
+
+  .csv-btn {
+    padding: 6px 14px;
+    border: 0.5px solid var(--brd2); border-radius: 22px;
+    background: transparent; color: var(--tx2);
+    font-size: 11px; font-family: var(--font);
+    cursor: pointer; transition: all 0.18s;
+  }
+  .csv-btn:hover { background: var(--surf2); color: var(--tx); }
+
+  /* ── COLLECTION ── */
+  .collection {
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 0 32px 80px;
+  }
+
+  /* Grid */
+  .watch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  /* Full-bleed card */
+  .watch-card {
+    background: var(--surf2);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    aspect-ratio: 2/3;
+    transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 20px rgba(0,0,0,0.04);
+  }
+  [data-theme="dark"] .watch-card {
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .watch-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
+  }
+  [data-theme="dark"] .watch-card:hover {
+    box-shadow: 0 8px 40px rgba(0,0,0,0.65);
+  }
+  [data-theme="retro"] .watch-card:hover {
+    box-shadow: 0 0 28px rgba(51,255,51,0.18);
+  }
+
+  /* Image fills entire card */
+  .card-img-wrap {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0;
+  }
+  .card-img-wrap img {
+    width: auto;
+    height: 70%;
+    object-fit: cover;
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .watch-card:hover .card-img-wrap img { transform: scale(1.06); }
+  .watch-ph { display:flex; align-items:center; justify-content:center; opacity:0.15; color:var(--tx); width:100%; height:100%; }
+  .watch-ph svg { width:100%; height:auto; }
+  .card-img-wrap .watch-ph { position:absolute; inset:0; }
+  .list-thumb .watch-ph svg { transform:scale(1.75); }
+  .card-img-ph, .list-ph, .modal-img-ph { display:none; }
+
+  /* Top overlay: name + ref */
+  .card-top {
+    position: absolute; top: 0; left: 0; right: 0;
+    padding: 16px 16px 40px;
+    z-index: 2;
+  }
+  .card-name {
+    font-size: 15px; font-weight: 600;
+    color: #ffffff;
+    overflow: auto;
+    margin-bottom: 2px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  }
+  .card-ref {
+    font-size: 10px; color: rgba(255,255,255,0.4);
+    font-family: var(--font);
+  }
+
+  /* Bottom overlay: badges */
+  .card-bottom {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 40px 14px 14px;
+    z-index: 2;
+    display: flex; gap: 4px; flex-wrap: wrap;
+  }
+  .card-bottom .badge {
+    background: rgba(255,255,255,0.15);
+    color: #ffffff;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 0.5px solid rgba(255,255,255,0.22);
+  }
+
+  /* Light mode card overrides */
+  body:not([data-theme="dark"]):not([data-theme="retro"]) .card-name { color: #1c1c1e; text-shadow: none; }
+  body:not([data-theme="dark"]):not([data-theme="retro"]) .card-ref { color: #4a4a4e; }
+  body:not([data-theme="dark"]):not([data-theme="retro"]) .card-bottom .badge {
+    background: rgba(0,0,0,0.08);
+    color: #1c1c1e;
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+    border: 0.5px solid rgba(0,0,0,0.12);
+  }
+
+  /* Retro mode card overrides */
+  [data-theme="retro"] .card-name { color: #33ff33; text-shadow: none; }
+  [data-theme="retro"] .card-ref { color: #26bf26; }
+  [data-theme="retro"] .card-bottom .badge {
+    background: rgba(51,255,51,0.08);
+    color: #33ff33;
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+    border: 0.5px solid rgba(51,255,51,0.18);
+  }
+
+  /* List view */
+  .watch-list {
+    border-radius: var(--radius);
+    overflow: visible;
+    border: 0.5px solid var(--brd2);
+    background: var(--surf);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  [data-theme="dark"] .watch-list { box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+
+  .list-header {
+    display: grid;
+    grid-template-columns: 120px 220px 160px 160px 200px 1fr;
+    border-bottom: 0.5px solid var(--brd2);
+    border-radius: var(--radius) var(--radius) 0 0;
+    position: sticky;
+    top: 48px;
+    z-index: 10;
+    background: var(--surf3);
+    overflow: hidden;
+    transition: border-radius 0.2s;
+  }
+  .list-header.is-stuck {
+    border-radius: 0;
+  }
+  .list-header-cell {
+    padding: 10px 20px;
+    font-size: 10px; font-weight: 600;
+    color: var(--tx2); text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-right: 0.5px solid var(--brd2);
+  }
+  .list-header-cell:first-child { border-right: none; }
+  .list-header-cell:last-child { border-right: none; }
+
+  .list-row {
+    display: grid;
+    grid-template-columns: 120px 220px 160px 160px 200px 1fr;
+    align-items: stretch;
+    cursor: pointer;
+    border-bottom: 0.5px solid var(--brd);
+    transition: background 0.15s;
+  }
+  .list-row:last-child { border-bottom: none; }
+  .list-row:hover { background: var(--surf2); }
+
+  .list-thumb {
+    min-height: 120px;
+    background: var(--surf2);
+    display: flex; align-items: center; justify-content: center;
+    padding: 12px;
+    transition: background 0.15s;
+  }
+  .list-row:hover .list-thumb { background: var(--surf3); }
+  .list-thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .list-ph { font-size: 28px; color: var(--tx3); opacity: 0.25; }
+
+  .list-cell {
+    padding: 0 20px;
+    display: flex; flex-direction: column; justify-content: center;
+    border-left: 0.5px solid var(--brd);
+    overflow: hidden;
+  }
+  .list-name {
+    font-size: 14px; font-weight: 600; color: var(--tx);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+  .list-ref { font-size: 11px; color: var(--tx3); margin-bottom: 0; }
+  .list-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+  .list-spec-val {
+    font-size: 13px; color: var(--tx); font-weight: 500;
+  }
+  .list-spec-sub {
+    font-size: 11px; color: var(--tx3); margin-top: 2px;
+  }
+  .list-chevron {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--tx3); font-size: 18px; font-weight: 300;
+    border-left: 0.5px solid var(--brd);
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 3px 9px; border-radius: 22px;
+    font-size: 10px; font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-seri { background: var(--surf2); color: var(--tx2); }
+  .badge-solar { background: var(--solar-bg); color: var(--solar); }
+  .badge-bt { background: var(--bt-bg); color: var(--bt); }
+  .badge-icon { width: 24px; padding: 3px 0; justify-content: center; }
+  [data-theme="retro"] .badge-seri,
+  [data-theme="retro"] .badge-solar,
+  [data-theme="retro"] .badge-bt {
+    background: transparent; color: var(--tx);
+    border: 0.5px solid var(--brd2);
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    z-index: 200;
+    align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surf);
+    border-radius: 24px;
+    width: 90vw; max-width: 90vw;
+    height: 90vh; max-height: 90vh;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    animation: mIn 0.24s cubic-bezier(0.34,1.56,0.64,1);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.1);
+  }
+  [data-theme="dark"] .modal { box-shadow: 0 32px 80px rgba(0,0,0,0.7); }
+  [data-theme="retro"] .modal { border: 0.5px solid var(--brd2); box-shadow: 0 0 40px rgba(51,255,51,0.08); }
+  @keyframes mIn {
+    from { transform: scale(0.93) translateY(16px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+
+  .modal-scroll { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .modal-scroll::-webkit-scrollbar { width: 3px; }
+  .modal-scroll::-webkit-scrollbar-thumb { background: var(--surf3); border-radius: 3px; }
+  .modal-body { padding: 24px 28px 32px; flex-shrink: 0; overflow-y: auto; max-height: 45vh; transition: max-height 0.3s ease; }
+  .modal.expanded .modal-body { max-height: 108px; overflow: hidden; cursor: zoom-out; }
+  .modal-body .divider,
+  .modal-body .feat-section,
+  .modal-body .spec-section-title,
+  .modal-body .spec-grid {
+    overflow: hidden; max-height: 600px; opacity: 1;
+    transition: max-height 0.3s ease, opacity 0.21s ease;
+  }
+  .modal.expanded .modal-body .divider,
+  .modal.expanded .modal-body .feat-section,
+  .modal.expanded .modal-body .spec-section-title,
+  .modal.expanded .modal-body .spec-grid { max-height: 0; opacity: 0; }
+
+  .modal-img-wrap {
+    flex: 1;
+    background: var(--surf2);
+    display: flex; align-items: center; justify-content: center;
+    padding: 28px; position: relative;
+    min-height: 0;
+    cursor: zoom-in;
+    transition: flex 0.3s ease;
+  }
+  .modal-img-wrap img {
+    max-height: 100%; max-width: 50%;
+    object-fit: contain;
+    transition: max-width 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  .modal.expanded .modal-img-wrap { flex: 99; cursor: zoom-out; }
+  .modal.expanded .modal-img-wrap img { max-width: 80%; }
+  .modal-img-ph { font-size: 60px; color: var(--tx3); opacity: 0.2; animation: none; }
+
+  .modal { position: relative; }
+  .modal-x {
+    position: absolute; top: 14px; right: 14px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(120,120,128,0.35);
+    border: none; color: var(--tx);
+    font-size: 13px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s; z-index: 100;
+  }
+  .modal-x:hover { background: rgba(120,120,128,0.55); }
+
+  .modal-name {
+    font-size: 24px; font-weight: 600;
+    color: var(--tx); letter-spacing: -0.02em;
+    margin-bottom: 3px;
+  }
+  .modal-ref { font-size: 11px; color: var(--tx3); font-family: var(--font); margin-bottom: 20px; }
+  .modal-badges { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; margin-bottom: 0; padding-top: 4px; }
+
+  .divider { height: 0.5px; background: var(--brd2); margin-bottom: 20px; }
+
+  .spec-section-title {
+    font-size: 10px; font-weight: 600;
+    color: var(--tx3); text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 12px;
+  }
+  .spec-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 0.5px solid var(--brd2);
+    margin-bottom: 20px;
+  }
+  .spec-cell {
+    padding: 11px 14px;
+    border-bottom: 0.5px solid var(--brd);
+    border-right: 0.5px solid var(--brd);
+  }
+  .spec-cell:nth-child(even) { border-right: none; }
+  .spec-cell:nth-last-child(-n+2) { border-bottom: none; }
+  .spec-label { font-size: 10px; color: var(--tx3); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; margin-bottom: 2px; }
+  .spec-val { font-size: 13px; color: var(--tx); font-weight: 500; }
+
+  .feat-section { margin-top: 4px; margin-bottom: 24px; }
+  .feat-title { font-size: 10px; font-weight: 600; color: var(--tx3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .feat-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .feat-tag {
+    font-size: 11px; padding: 5px 12px;
+    border-radius: 22px;
+    background: var(--surf2); color: var(--tx2);
+    border: 0.5px solid var(--brd2);
+  }
+
+  /* Loading / empty */
+  .loading { text-align: center; padding: 100px 20px; color: var(--tx3); font-family: var(--font); font-size: 11px; letter-spacing: 0.1em; }
+  .empty { text-align: center; padding: 100px 20px; }
+  .empty-label { font-size: 18px; font-weight: 500; color: var(--tx2); margin-top: 12px; }
+
+  /* Retro scanline */
+  [data-theme="retro"] body::after {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(51,255,51,0.012) 3px, rgba(51,255,51,0.012) 4px);
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .topbar { padding: 0 16px; }
+    .page-header { padding: 32px 16px 0; }
+    .filter-bar { padding: 16px 16px 18px; }
+    .collection { padding: 0 16px 60px; }
+    .watch-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .spec-grid { grid-template-columns: 1fr; }
+    .modal-body { padding: 18px 20px 28px; }
+    .list-header { grid-template-columns: 80px 1fr; }
+    .list-row { grid-template-columns: 80px 1fr; }
+    .list-cell:nth-child(n+3) { display: none; }
+    .list-header-cell:nth-child(n+3) { display: none; }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .list-header { grid-template-columns: 100px 1fr 130px 150px; }
+    .list-row { grid-template-columns: 100px 1fr 130px 150px; }
+    .list-cell:nth-child(n+5) { display: none; }
+    .list-header-cell:nth-child(n+5) { display: none; }
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<nav class="topbar">
+  <span class="logo">CASIO</span>
+  <div class="topbar-right">
+    <div class="seg" id="themeCtrl">
+      <button onclick="setTheme('light')">light</button>
+      <button class="on" onclick="setTheme('dark')">dark</button>
+      <button onclick="setTheme('retro')">retro</button>
+    </div>
+    <div class="seg" id="viewCtrl">
+      <button class="on" onclick="setView('grid')" title="Grid">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="0" y="0" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="8" y="0" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="0" y="8" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="8" y="8" width="6" height="6" rx="1.5" fill="currentColor"/></svg>
+      </button>
+      <button onclick="setView('list')" title="Liste">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="0" y="1" width="14" height="2.5" rx="1" fill="currentColor"/><rect x="0" y="5.75" width="14" height="2.5" rx="1" fill="currentColor"/><rect x="0" y="10.5" width="14" height="2.5" rx="1" fill="currentColor"/></svg>
+      </button>
+    </div>
+    <div class="seg">
+      <button onclick="exportCSV()" title="CSV İndir">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M7 9l-3-3M7 9l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <h1 class="page-title">My Collection.</h1>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-left">
+    <div class="filter-tabs" id="seriCtrl"></div>
+  </div>
+  <div class="filter-right">
+    <div class="search-wrap">
+      <svg class="search-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="6.5" cy="6.5" r="4.5"/><path d="M10.5 10.5l3 3" stroke-linecap="round"/>
+      </svg>
+      <input class="search-input" id="searchInput" placeholder="ara..." oninput="applyFilters()">
+    </div>
+    <select class="sort-select" id="sortCtrl" onchange="applyFilters()">
+      <option value="default">Varsayılan</option>
+      <option value="date-desc">Yeni → Eski</option>
+      <option value="date-asc">Eski → Yeni</option>
+      <option value="model">Model Adı</option>
+      <option value="seri">Seri</option>
+      <option value="mekanizma">Mekanizma</option>
+    </select>
+    <span class="count-lbl" id="countEl"></span>
+  </div>
+</div>
+
+<main class="collection">
+  <div id="watchList"><div class="loading">yükleniyor...</div></div>
+</main>
+
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<script>
+const CORE_COLS = ['modelAdi','referansNo','seri','mekanizma','kadran','camTipi','kasa','kayis','tarih','ozellikler','fotografUrl'];
+const SPEC_LABELS = { seri:'Seri', mekanizma:'Mekanizma', kadran:'Kadran', camTipi:'Cam', kasa:'Kasa', kayis:'Kayış', tarih:'Satın alma' };
+
+let allWatches = [], filtered = [], headers = [], view = 'grid', activeSeri = '';
+
+
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const hdrs = lines[0].split(',').map(h => h.trim());
+  const watches = [];
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const vals = parseCSVLine(lines[i]);
+    const obj = {};
+    hdrs.forEach((h, idx) => { obj[h] = vals[idx] || ''; });
+    obj._id = i;
+    if (obj.ozellikler) obj.ozellikler = obj.ozellikler.split('|').map(s => s.trim()).filter(Boolean);
+    watches.push(obj);
+  }
+  return { hdrs, watches };
+}
+
+function parseCSVLine(line) {
+  const result = []; let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+    else { cur += c; }
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+async function loadCSV() {
+  try {
+    const res = await fetch('data.csv?t=' + Date.now());
+    if (!res.ok) throw new Error('CSV yüklenemedi');
+    const text = await res.text();
+    const { hdrs, watches } = parseCSV(text);
+    headers = hdrs; allWatches = watches;
+    buildSeriFilter(); applyFilters();
+  } catch(e) {
+    document.getElementById('watchList').innerHTML = `<div class="empty"><div class="empty-label">data.csv yüklenemedi</div></div>`;
+  }
+}
+
+function buildSeriFilter() {
+  const seriler = ['', ...new Set(allWatches.map(w => anaSeri(w.seri)).filter(Boolean))];
+  document.getElementById('seriCtrl').innerHTML = seriler.map(s =>
+    `<button class="ftab ${!s?'on':''}" onclick="setSeri('${s}')">${s||'tümü'}</button>`
+  ).join('');
+}
+
+function setTheme(t) {
+  document.body.setAttribute('data-theme', t);
+  document.querySelectorAll('#themeCtrl button').forEach(b => b.classList.toggle('on', b.textContent === t));
+  localStorage.setItem('casio-theme', t);
+}
+function setView(v) {
+  view = v;
+  document.querySelectorAll('#viewCtrl button').forEach((b, i) => {
+    b.classList.toggle('on', (v === 'grid' && i === 0) || (v === 'list' && i === 1));
+  });
+  render();
+}
+function setSeri(s) {
+  activeSeri = s;
+  document.querySelectorAll('.ftab').forEach(b => b.classList.toggle('on', b.textContent === (s||'tümü')));
+  applyFilters();
+}
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const sort = document.getElementById('sortCtrl').value;
+  filtered = allWatches.filter(w => {
+    const ms = !activeSeri || anaSeri(w.seri) === activeSeri;
+    const mq = !q || (w.modelAdi||'').toLowerCase().includes(q) || (w.referansNo||'').toLowerCase().includes(q);
+    return ms && mq;
+  });
+
+  if (sort === 'date-desc') {
+    filtered.sort((a,b) => parseTarih(b.tarih) - parseTarih(a.tarih));
+  } else if (sort === 'date-asc') {
+    filtered.sort((a,b) => parseTarih(a.tarih) - parseTarih(b.tarih));
+  } else if (sort === 'model') {
+    filtered.sort((a,b) => (a.modelAdi||'').localeCompare(b.modelAdi||'', 'tr'));
+  } else if (sort === 'seri') {
+    filtered.sort((a,b) => (a.seri||'').localeCompare(b.seri||'', 'tr'));
+  } else if (sort === 'mekanizma') {
+    filtered.sort((a,b) => (a.mekanizma||'').localeCompare(b.mekanizma||'', 'tr'));
+  }
+
+  document.getElementById('countEl').textContent = filtered.length + ' saat';
+  render();
+}
+
+const TR_MONTHS = {
+  'Ocak':1,'Şubat':2,'Mart':3,'Nisan':4,'Mayıs':5,'Haziran':6,
+  'Temmuz':7,'Ağustos':8,'Eylül':9,'Ekim':10,'Kasım':11,'Aralık':12
+};
+function parseTarih(t) {
+  if (!t) return 0;
+  const [g, ay, y] = t.trim().split(' ');
+  return new Date(+y, (TR_MONTHS[ay]||1)-1, +g).getTime();
+}
+
+function listFeatures(w) {
+  if (!Array.isArray(w.ozellikler) || !w.ozellikler.length) return '<span style="color:var(--tx3)">—</span>';
+  return w.ozellikler.map((f, i) => {
+    const comma = i < w.ozellikler.length - 1 ? ',' : '';
+    return `<span style="display:inline-block;font-size:12px;color:var(--tx2);line-height:1.8;white-space:nowrap;">${f}${comma}</span>`;
+  }).join(' ');
+}
+
+const WATCH_PH = `<div class="watch-ph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" viewBox="0 0 1024 528"> <path fill="currentColor" opacity="1.000000" stroke="none" d=" M616.159424,384.349335 C614.033142,397.742432 610.811340,410.493500 607.315979,423.154083 C605.455811,429.891785 599.949768,433.236603 592.348877,433.270142 C578.016052,433.333344 563.682800,433.283203 549.349731,433.283569 C511.350433,433.284576 473.351166,433.299957 435.351868,433.281433 C424.579224,433.276154 420.025665,429.658936 417.455750,419.069336 C415.139587,409.525482 412.962219,399.947968 410.646973,390.403870 C409.847473,387.108215 409.579651,384.104828 411.059265,380.725586 C413.157654,375.933105 407.789429,374.942871 405.730743,372.298340 C404.298004,370.457855 402.295135,369.606232 400.148010,371.633789 C397.770935,373.878510 395.683228,373.209839 393.747406,370.953461 C392.337006,369.309448 390.861755,367.721313 389.434937,366.091156 C387.696625,364.105133 387.062653,362.059723 389.228333,359.940369 C393.659851,355.603607 388.759125,353.215057 387.117615,350.233612 C385.635071,347.540924 383.486237,346.407745 380.524109,348.412537 C378.643890,349.685028 376.719574,349.710602 375.147064,347.883209 C373.445312,345.905609 372.661377,343.840088 373.564545,341.022369 C376.334076,332.382355 376.218994,332.345459 373.424927,326.118652 C377.102325,328.485168 376.755890,325.893738 376.925476,323.965271 C377.925110,312.598755 374.392426,302.533905 367.526428,293.705109 C364.682220,290.047852 363.344238,286.400970 363.503601,281.810425 C363.688171,276.493439 363.371704,271.153870 363.150696,265.829193 C362.794159,257.239166 362.848175,248.983841 369.580383,242.092499 C371.939301,239.677856 375.122070,236.349335 372.732422,231.892090 C372.594940,231.635666 372.969574,231.013367 373.229095,230.649139 C377.180298,225.103683 377.523132,223.546921 376.483276,215.542847 C375.056519,214.055252 373.939880,217.141861 372.478485,215.770447 C371.912018,215.062683 372.010895,214.122604 372.470673,213.488281 C376.327087,208.167816 376.028137,202.721222 373.392365,197.003784 C372.238647,194.501114 373.836029,192.491211 375.506195,190.794769 C377.046692,189.230057 378.865082,189.529846 380.537415,190.616898 C383.824799,192.753723 385.961884,191.132980 387.419617,188.334473 C388.893311,185.505325 393.783691,183.267014 389.299347,179.126556 C387.405273,177.377716 387.356720,175.364731 389.067993,173.379028 C390.699493,171.485825 392.297852,169.561951 393.983307,167.717865 C395.652893,165.891113 397.691406,165.188599 399.676849,167.028397 C402.168121,169.336960 403.955658,168.371246 406.102570,166.469177 C409.638519,163.336533 413.730408,160.689651 410.004150,154.998230 C409.354706,154.006271 409.904144,152.056580 410.231873,150.625244 C412.683655,139.918137 415.156555,129.215027 417.747498,118.540909 C419.879364,109.758064 425.130127,105.707703 434.260712,105.704819 C486.759735,105.688210 539.258789,105.686249 591.757812,105.707748 C600.881714,105.711487 606.135376,109.764496 608.278687,118.542801 C610.883850,129.213135 613.320679,139.924545 615.843689,150.615036 C616.311951,152.599243 616.408447,154.528015 615.695068,156.505447 C614.258850,160.485886 618.459595,167.604736 622.745544,168.419601 C623.476074,168.558472 624.554382,168.400726 625.060791,167.933868 C628.101501,165.130432 630.805298,165.498962 632.969604,168.814911 C635.205811,172.240875 641.517151,174.775421 635.806519,180.241867 C634.911011,181.099030 634.508240,182.307877 635.241821,183.433868 C636.694397,185.663605 638.252747,187.826981 639.824890,189.975708 C642.198242,193.219574 644.434143,190.695953 646.828247,189.880676 C649.868652,188.845306 653.832458,192.878952 652.809753,196.402283 C651.363647,201.383820 649.291809,206.135406 651.781189,211.367004 C652.052063,211.936356 651.635071,213.043472 651.217590,213.697052 C647.443542,219.605576 648.658081,225.204422 651.889587,230.881393 C653.285461,233.333771 652.093262,236.750122 654.385559,238.976196 C663.168579,247.505417 663.080383,258.475098 662.870605,269.493958 C662.832520,271.493073 662.743469,273.504395 662.903992,275.491791 C663.527222,283.207764 662.104248,289.959595 656.885498,296.321686 C651.666992,302.683563 649.320129,310.685150 649.065186,319.084076 C648.994080,321.428162 648.900085,323.751160 650.949097,325.529694 C652.066467,326.499542 652.313293,327.977509 651.655212,329.212372 C649.508972,333.239807 650.840027,337.021851 652.354431,340.735596 C653.529236,343.616516 652.900391,345.897949 650.797852,347.983459 C648.867371,349.898346 646.868896,349.386902 644.895386,348.139252 C642.496643,346.622772 640.652161,347.551208 639.396667,349.608185 C637.689392,352.405243 633.147583,355.062378 635.993347,358.572266 C641.076538,364.841705 634.923096,366.940979 632.555420,370.500580 C630.308289,373.878876 628.030640,372.963593 625.000305,371.085663 C621.515564,368.926178 619.865234,372.998077 617.598450,374.559662 C615.589722,375.943451 613.430115,377.640472 614.734131,380.731598 C615.185913,381.802460 615.651489,382.867554 616.159424,384.349335 M616.834167,184.662613 C610.717224,177.824265 604.171936,171.444992 597.103455,165.573685 C590.255981,159.885941 582.527527,157.295197 573.638123,157.316650 C532.992432,157.414703 492.346130,157.441025 451.700684,157.301437 C443.460419,157.273132 436.251007,159.662262 429.987488,164.762131 C417.661652,174.798035 406.992645,186.419342 397.421295,199.111481 C391.074799,207.527283 387.825409,216.588898 387.958496,227.333069 C388.319641,256.480377 388.164886,285.635376 388.036865,314.786560 C388.003387,322.408234 390.032440,329.202850 394.276978,335.448883 C403.703827,349.320892 415.241241,361.259064 427.718414,372.379486 C434.762024,378.657227 442.794403,381.755371 452.263672,381.733795 C492.243042,381.642639 532.224060,381.522644 572.201477,381.812286 C583.074341,381.891083 592.025330,378.250916 599.885803,371.210815 C611.460815,360.843811 622.004517,349.543121 630.868469,336.727234 C635.544006,329.967072 638.061890,322.698853 638.005249,314.315216 C637.818237,286.663971 637.372925,258.993530 638.191528,231.365021 C638.620911,216.874786 634.273804,204.967926 625.074707,194.325211 C622.460999,191.301346 619.905029,188.227570 616.834167,184.662613 M586.379761,143.285950 C593.964905,139.697586 596.859497,133.606995 593.986389,127.280785 C591.095886,120.916206 582.693604,117.865654 575.631348,120.616814 C569.358032,123.060638 566.151550,129.920731 568.389587,136.109970 C570.584595,142.180222 576.529968,144.745743 586.379761,143.285950 M452.507019,121.864601 C445.208466,118.343483 437.577606,119.438988 433.566803,124.583656 C429.531647,129.759567 430.365173,136.771118 435.514221,140.965622 C441.348694,145.718460 451.239166,144.891815 455.777496,139.272003 C460.116302,133.899277 459.100525,127.436081 452.507019,121.864601 M570.062683,414.373993 C571.424744,416.149323 573.291443,417.227570 575.304443,418.056091 C584.135864,421.691101 593.798584,417.064331 594.805542,408.742126 C595.461548,403.320557 592.827087,398.620819 587.765991,396.183868 C582.223633,393.515198 575.306885,394.565308 571.106201,398.713135 C567.134399,402.634949 566.648438,407.551514 570.062683,414.373993 M444.512909,419.028015 C454.377991,418.471710 460.237152,412.105011 458.072937,404.293396 C456.232117,397.649078 449.768402,393.992188 441.906433,395.147003 C435.621796,396.070190 430.956573,401.390198 431.114105,407.454163 C431.283508,413.975616 435.769745,418.110901 444.512909,419.028015 z"/> <path fill="currentColor" opacity="1.000000" stroke="none" d=" M414.257568,216.445251 C421.449554,204.662476 429.508606,194.140152 440.712830,186.398438 C445.913666,182.804825 451.504486,180.877792 457.995483,180.905701 C493.325378,181.057556 528.663574,181.402939 563.983032,180.778870 C577.132446,180.546539 586.669617,186.092117 595.186157,194.806290 C598.904053,198.610489 602.227539,202.816437 605.566101,206.971741 C611.937439,214.901718 615.112122,223.815659 614.989685,234.193222 C614.718445,257.187805 614.563171,280.198486 615.150085,303.182404 C615.454956,315.120819 611.803650,324.975464 604.172424,333.808716 C600.364807,338.216034 596.991394,342.998169 592.651855,346.940613 C584.622498,354.235046 575.827881,358.421356 564.336792,358.228088 C529.682434,357.645325 495.009766,357.758453 460.350159,358.138611 C450.835693,358.242981 443.080566,355.271332 436.176147,349.291107 C428.573364,342.705963 422.148285,335.033783 416.693970,326.615906 C412.729767,320.497772 410.825317,313.778351 410.895782,306.286621 C411.129364,281.457397 411.035950,256.624573 410.961975,231.793427 C410.946289,226.524506 411.762939,221.519455 414.257568,216.445251 M448.383423,266.499939 C448.617645,277.816071 447.757416,289.160858 448.905426,300.446686 C449.853485,309.766937 455.865906,314.962494 465.202728,314.967987 C496.844727,314.986572 528.486694,314.982239 560.128723,314.976776 C570.731445,314.974945 577.486938,308.397552 577.557007,297.610657 C577.680359,278.626251 577.670105,259.640045 577.562988,240.655457 C577.506165,230.573227 570.604797,223.930176 560.535095,223.928207 C529.059631,223.922104 497.584137,223.926315 466.108643,223.935562 C455.151672,223.938782 448.534729,230.456573 448.399567,241.518829 C448.301941,249.511398 448.382996,257.506134 448.383423,266.499939 z"/> <path fill="currentColor" opacity="1.000000" stroke="none" d=" M408.342590,245.000916 C408.342255,266.332642 408.394531,287.164795 408.310730,307.996368 C408.283020,314.882294 410.100189,321.155487 413.785370,326.895203 C420.770447,337.774689 429.002197,347.534546 439.603668,355.110260 C440.982117,356.095276 442.573517,357.024750 442.274475,358.979523 C441.406555,364.652679 440.594208,370.354279 438.662445,376.147827 C433.893433,374.471710 430.633209,371.676147 427.386200,368.876190 C415.834869,358.915192 405.912445,347.496094 397.218353,334.993958 C392.719391,328.524414 390.542847,321.445343 390.596710,313.425598 C390.789276,284.762177 390.888123,256.094177 390.556122,227.433350 C390.446625,217.979767 392.756592,209.759003 398.347687,202.234726 C408.425568,188.672241 419.343689,175.935593 433.050690,165.852814 C434.484863,164.797806 435.730804,163.280685 438.512360,163.418777 C440.729034,168.690964 441.567749,174.549942 442.123627,180.403748 C442.356537,182.856201 439.745605,183.791809 438.064484,185.081360 C426.379578,194.044403 417.016754,204.932297 410.809906,218.353210 C406.932343,226.737610 408.711334,235.739716 408.342590,245.000916 z"/> <path fill="currentColor" opacity="1.000000" stroke="none" d=" M585.144897,366.765198 C584.707642,364.733337 584.484375,363.068420 583.998962,361.483765 C583.015625,358.273010 584.141785,356.391388 586.942566,354.501160 C598.784790,346.508850 607.256958,335.427856 614.234253,323.180176 C616.808411,318.661591 617.734863,313.576141 617.718201,308.277008 C617.636780,282.468201 617.624573,256.658722 617.732422,230.850067 C617.759033,224.482529 616.344482,218.492096 613.044983,213.226379 C606.114502,202.165817 597.997559,192.011475 587.158691,184.471924 C584.213501,182.423264 583.270874,180.350281 584.157715,176.964767 C585.320557,172.525864 586.174500,168.006073 587.239258,163.166855 C593.191895,164.537216 596.706360,168.575760 600.435059,171.868591 C612.210266,182.267380 622.467041,194.069763 630.873474,207.388031 C633.864014,212.126038 635.282715,217.404419 635.282227,223.034195 C635.279846,254.005081 635.230164,284.976105 635.312927,315.946777 C635.330566,322.551056 633.319275,328.424347 629.695618,333.750275 C620.088806,347.869659 608.755188,360.449738 595.505005,371.256256 C593.707153,372.722534 591.721191,373.966461 589.766174,375.226135 C589.256958,375.554260 588.536011,375.553864 587.764038,375.740112 C585.816223,373.097321 585.994446,369.986176 585.144897,366.765198 z"/> <path fill="currentColor" opacity="1.000000" stroke="none" d=" M442.662476,370.826355 C443.543488,367.016449 443.440399,362.932495 445.370239,360.394226 C447.868744,357.108002 451.709473,360.789368 455.073639,360.770081 C493.551880,360.549347 532.031860,360.603638 570.511292,360.644684 C573.710022,360.648102 576.697937,359.576508 580.250854,358.993958 C582.463013,364.351746 582.994995,369.962555 584.132935,375.393829 C584.500183,377.146515 583.188477,378.159790 581.490356,378.370117 C579.020752,378.676025 576.538086,379.084747 574.060547,379.087555 C533.582153,379.133148 493.103729,379.122345 452.625275,379.120392 C451.126404,379.120300 449.623810,379.141876 448.129333,379.049713 C441.828278,378.661011 441.059143,377.560852 442.662476,370.826355 z"/> <path fill="currentColor" opacity="1.000000" stroke="none" d=" M579.828064,179.717758 C575.441772,178.559052 571.337341,178.302322 567.140625,178.309769 C530.502136,178.374893 493.863434,178.343185 457.224854,178.381485 C454.912659,178.383896 452.428589,178.256546 450.325439,179.019318 C446.208130,180.512604 444.523834,179.158890 443.969574,175.093170 C443.498566,171.638077 442.698547,168.225281 441.978699,164.807526 C441.467682,162.381241 442.282684,160.872650 444.799072,160.552734 C447.103455,160.259766 449.424377,159.910629 451.738403,159.907654 C492.540344,159.855423 533.342285,159.842117 574.144287,159.846115 C584.527100,159.847122 584.971741,160.387894 582.701904,170.568741 C582.024536,173.607040 582.158142,176.895508 579.828064,179.717758 z"/> <path fill="currentColor" opacity="1.000000" stroke="none" d=" M573.445679,138.605713 C569.990051,134.895905 569.111816,131.139954 571.887268,127.064743 C574.247375,123.599403 580.234680,121.533745 584.369812,122.762314 C589.004700,124.139389 591.606323,127.590042 592.155029,132.143585 C592.904175,138.359802 584.531311,143.392578 577.570984,141.070892 C576.194458,140.611740 574.996094,139.618378 573.445679,138.605713 z"/> <path fill="currentColor" opacity="1.000000" stroke="none" d=" M446.411255,141.454620 C445.372101,141.549637 444.703369,141.674438 444.054352,141.607742 C438.153412,141.001083 434.078644,137.461777 433.737427,132.688675 C433.390747,127.839088 436.840485,123.774742 442.243774,122.666817 C447.987518,121.489082 453.361389,124.224533 455.230194,129.277283 C457.187805,134.570190 454.135437,138.953201 446.411255,141.454620 z"/> <path fill="currentColor" opacity="1.000000" stroke="none" d=" M571.903076,402.039246 C575.279297,398.375305 579.166138,396.593781 583.705383,397.623779 C587.956421,398.588379 591.291504,401.076660 592.127991,405.732941 C592.866150,409.841736 590.880249,412.865601 587.521484,414.867462 C583.188843,417.449768 578.674377,417.534485 574.450378,414.562866 C570.181641,411.559723 569.440491,407.889130 571.903076,402.039246 z"/> <path fill="currentColor" opacity="1.000000" stroke="none" d=" M434.598724,410.902069 C432.786407,403.815735 435.554474,399.262360 442.277313,397.620392 C447.866974,396.255157 454.070770,399.878357 455.527802,405.358978 C457.197327,411.638824 449.379364,418.284088 442.301056,416.557068 C439.125366,415.782288 436.512695,414.124359 434.598724,410.902069 z"/> </svg></div>`;
+function showWatchPH(el) { el.parentElement.innerHTML = WATCH_PH; }
+
+const SOLAR_ICON = `<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" fill="currentColor"/><line x1="8" y1="1" x2="8" y2="3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="12.5" x2="8" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="8" x2="3.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12.5" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="3.05" y1="3.05" x2="4.81" y2="4.81" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="11.19" y1="11.19" x2="12.95" y2="12.95" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12.95" y1="3.05" x2="11.19" y2="4.81" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4.81" y1="11.19" x2="3.05" y2="12.95" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const BT_ICON = `<svg width="9" height="12" viewBox="0 0 11 14" fill="none"><path d="M2 3.5L9 9.5L5.5 13V1L9 4.5L2 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function badges(w, short) {
+  const [anaS, subS] = (w.seri||'').split(' - ');
+  let h = `<span class="badge badge-seri">${anaS}</span>`;
+  if (subS) h += `<span class="badge badge-seri">${subS}</span>`;
+  if ((w.mekanizma||'').includes('Solar')) h += `<span class="badge badge-icon badge-solar">${SOLAR_ICON}</span>`;
+  if (Array.isArray(w.ozellikler) && w.ozellikler.includes('Bluetooth')) h += `<span class="badge badge-icon badge-bt">${BT_ICON}</span>`;
+  return h;
+}
+
+function anaSeri(s) { return (s||'').split(' - ')[0]; }
+
+function render() {
+  const el = document.getElementById('watchList');
+  if (!filtered.length) { el.innerHTML = `<div class="empty"><div class="empty-label">Sonuç bulunamadı</div></div>`; return; }
+
+  if (view === 'grid') {
+    el.innerHTML = `<div class="watch-grid">${filtered.map(w => `
+      <div class="watch-card" onclick="openModal(${w._id})">
+        <div class="card-top">
+          <div class="card-name">${w.modelAdi||''}</div>
+          <div class="card-ref">${w.referansNo||''}</div>
+        </div>
+        <div class="card-img-wrap">
+          ${w.fotografUrl ? `<img src="${w.fotografUrl}" onerror="showWatchPH(this)">` : WATCH_PH}
+        </div>
+        <div class="card-bottom">${badges(w, true)}</div>
+      </div>`).join('')}</div>`;
+  } else {
+    el.innerHTML = `<div class="watch-list">
+      <div class="list-header">
+        <div class="list-header-cell"></div>
+        <div class="list-header-cell">Model</div>
+        <div class="list-header-cell">Seri</div>
+        <div class="list-header-cell">Mekanizma</div>
+        <div class="list-header-cell">Kasa / Cam</div>
+        <div class="list-header-cell">Özellikler</div>
+      </div>
+      ${filtered.map(w => `
+      <div class="list-row" onclick="openModal(${w._id})">
+        <div class="list-thumb">
+          ${w.fotografUrl ? `<img src="${w.fotografUrl}" onerror="showWatchPH(this)">` : WATCH_PH}
+        </div>
+        <div class="list-cell">
+          <div class="list-name">${w.modelAdi||''}</div>
+          <div class="list-ref">${w.referansNo||''}</div>
+        </div>
+        <div class="list-cell">
+          <div class="list-badges">${badges(w, false)}</div>
+        </div>
+        <div class="list-cell">
+          <div class="list-spec-val">${w.mekanizma||'—'}</div>
+        </div>
+        <div class="list-cell">
+          <div class="list-spec-val">${w.kasa||'—'}</div>
+          <div class="list-spec-sub">${w.camTipi ? w.camTipi + ' Cam' : ''}</div>
+        </div>
+        <div class="list-cell">
+          <div class="list-badges">${listFeatures(w)}</div>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }
+}
+
+function openModal(id) {
+  const w = allWatches.find(x => x._id === id); if (!w) return;
+  const specEntries = Object.entries(SPEC_LABELS).filter(([k]) => w[k]);
+  const extraCols = headers.filter(h => !CORE_COLS.includes(h) && w[h]);
+
+  const specsHTML = specEntries.map(([k, lbl]) =>
+    `<div class="spec-cell"><div class="spec-label">${lbl}</div><div class="spec-val">${w[k]}</div></div>`
+  ).join('');
+
+  const extraHTML = extraCols.length ? extraCols.map(h =>
+    `<div class="spec-cell"><div class="spec-label">${h}</div><div class="spec-val">${w[h]}</div></div>`
+  ).join('') : '';
+
+  const tagsHTML = Array.isArray(w.ozellikler) && w.ozellikler.length ? `
+    <div class="feat-section">
+      <div class="feat-title">Özellikler</div>
+      <div class="feat-tags">${w.ozellikler.map(f => `<span class="feat-tag">${f}</span>`).join('')}</div>
+    </div>` : '';
+
+  document.getElementById('modalBox').innerHTML = `
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div class="modal-img-wrap" onclick="toggleModalExpand()">
+      ${w.fotografUrl ? `<img src="${w.fotografUrl}" onerror="showWatchPH(this)">` : WATCH_PH}
+    </div>
+    <div class="modal-body" onclick="if(document.getElementById('modalBox').classList.contains('expanded'))toggleModalExpand()">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:4px;">
+        <div class="modal-name">${w.modelAdi||''}</div>
+        <div class="modal-badges">${badges(w, false)}</div>
+      </div>
+      <div class="modal-ref">${w.referansNo||''}</div>
+      <div class="divider"></div>
+      ${tagsHTML}
+      <div class="spec-section-title">Teknik Özellikler</div>
+      <div class="spec-grid">${specsHTML}${extraHTML}</div>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function toggleModalExpand() {
+  document.getElementById('modalBox').classList.toggle('expanded');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.getElementById('modalBox').classList.remove('expanded');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+window.addEventListener('scroll', () => {
+  const header = document.querySelector('.list-header');
+  if (!header) return;
+  const stuck = header.getBoundingClientRect().top <= 48;
+  header.classList.toggle('is-stuck', stuck);
+});
+
+function exportCSV() {
+  const rows = [headers.join(',')];
+  allWatches.forEach(w => {
+    rows.push(headers.map(h => {
+      const v = Array.isArray(w[h]) ? w[h].join(' | ') : (w[h]||'');
+      return `"${String(v).replace(/"/g,'""')}"`;
+    }).join(','));
+  });
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(rows.join('\n'));
+  a.download = 'casio-koleksiyon.csv';
+  a.click();
+}
+
+const t = localStorage.getItem('casio-theme') || 'dark';
+setTheme(t);
+loadCSV();
+</script>
+</body>
+</html>
