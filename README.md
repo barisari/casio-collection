@@ -9,3 +9,7 @@ Kişisel Casio saat koleksiyonumu sergileyen bir web sayfası. Vintage/Retro, G-
 - Seri bazlı filtreleme ve arama
 - Detaylı saat bilgisi modalı
 - CSV export
+
+## Geliştirme
+
+Claude branch'lerine (`claude/*`) yapılan push'lar otomatik olarak `main` branch'ine merge edilir.
