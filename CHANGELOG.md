@@ -11,7 +11,14 @@
 - **Görünümler:** grid (default) / list
 - **Filtreleme:** Seri bazlı tab filtre + metin araması + sıralama (tarih, model, seri, mekanizma)
 - **Modal:** Tıklanan saatin detay sayfası — fotoğraf, özellik badge'leri, teknik spec grid
-- **CSV Sütunları:** `modelAdi, referansNo, seri, mekanizma, Kadran, Cam, Kasa, Kayış, tarih, ozellikler, fotografUrl`
+- **CSV Sütunları:** `modelAdi, referansNo, seri, mekanizma, Kadran, Cam, Kasa, Kayış, Açıklama, ozellikler, tarih, fotografUrl`
+
+## 2026-03-25 — Açıklama sütunu eklendi
+
+- `data.csv`'ye yeni `Açıklama` sütunu eklendi (her saat için kısa hikaye/tanıtım metni)
+- Sütun sırası değişti: `tarih`, `ozellikler`'den sonraya taşındı
+- `index.html`: `Açıklama` CORE_COLS'a eklendi (spec grid'de gösterilmez)
+- Modal'da açıklama metni divider'dan sonra paragraf olarak gösteriliyor
 
 ## 2026-03-25 — data.csv detaylandırması
 

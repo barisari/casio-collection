@@ -670,7 +670,7 @@
 </div>
 
 <script>
-const CORE_COLS = ['modelAdi','referansNo','seri','tarih','ozellikler','fotografUrl'];
+const CORE_COLS = ['modelAdi','referansNo','seri','tarih','ozellikler','fotografUrl','Açıklama'];
 const DISPLAY_FIRST = ['mekanizma'];
 
 
@@ -919,6 +919,7 @@ function openModal(id) {
         ${w.tarih ? `<div style="font-size:11px;color:var(--tx3);">${w.tarih}</div>` : ''}
       </div>
       <div class="divider"></div>
+      ${w['Açıklama'] ? `<p style="font-size:13px;color:var(--tx2);line-height:1.65;margin-bottom:20px;">${w['Açıklama']}</p>` : ''}
       ${tagsHTML}
       <div class="spec-section-title">Teknik Özellikler</div>
       <div class="spec-grid">${specsHTML}${extraHTML}</div>
