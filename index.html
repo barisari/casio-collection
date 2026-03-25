@@ -303,7 +303,7 @@
   .card-name {
     font-size: 15px; font-weight: 600;
     color: #ffffff;
-    word-wrap: break-word;
+    overflow: auto;
     margin-bottom: 2px;
     text-shadow: 0 1px 4px rgba(0,0,0,0.4);
   }
@@ -836,8 +836,8 @@ function render() {
           <div class="list-spec-val">${w.mekanizma||'—'}</div>
         </div>
         <div class="list-cell">
-          <div class="list-spec-val">${w.kasa||'—'}</div>
-          <div class="list-spec-sub">${w.camTipi ? w.camTipi + ' Cam' : ''}</div>
+          <div class="list-spec-val">${w['Kasa']||'—'}</div>
+          <div class="list-spec-sub">${w['Cam'] ? w['Cam'] + ' Cam' : ''}</div>
         </div>
         <div class="list-cell">
           <div class="list-badges">${listFeatures(w)}</div>
