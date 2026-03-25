@@ -17,8 +17,7 @@
 
 - `data.csv`'ye yeni `Açıklama` sütunu eklendi (her saat için kısa hikaye/tanıtım metni)
 - Sütun sırası değişti: `tarih`, `ozellikler`'den sonraya taşındı
-- `index.html`: `Açıklama` CORE_COLS'a eklendi (spec grid'de gösterilmez)
-- Modal'da açıklama metni divider'dan sonra paragraf olarak gösteriliyor
+- Açıklama şu an modal spec grid'de normal hücre olarak gösteriliyor (ileride farklı tasarım planlanıyor)
 
 ## 2026-03-25 — data.csv detaylandırması
 
