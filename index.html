@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -24,7 +25,7 @@
     --radius: 16px;
     --radius-sm: 12px;
     --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-
+    --mono: 'DM Mono', 'SF Mono', monospace;
   }
   [data-theme="dark"] {
     --bg: #000000;
@@ -125,7 +126,7 @@
     color: var(--bg);
     box-shadow: none;
   }
-
+  [data-theme="dark"] .seg button.on { box-shadow: none; }
   .seg button:hover:not(.on) { color: var(--tx); }
 
   /* ── PAGE HEADER ── */
@@ -527,7 +528,7 @@
     color: var(--tx); letter-spacing: -0.02em;
     margin-bottom: 3px;
   }
-  .modal-ref { font-size: 11px; color: var(--tx3); font-family: var(--font); margin-bottom: 20px; }
+  .modal-ref { font-size: 11px; color: var(--tx3); font-family: var(--font); margin-bottom: 0; }
   .modal-badges { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; margin-bottom: 0; padding-top: 4px; }
 
   .divider { height: 0.5px; background: var(--brd2); margin-bottom: 20px; }
@@ -552,6 +553,12 @@
   }
   .spec-cell:nth-child(even) { border-right: none; }
   .spec-cell:nth-last-child(-n+2) { border-bottom: none; }
+
+  @media (max-width: 640px) {
+    .spec-cell { border-right: none; }
+    .spec-cell:nth-last-child(-n+2) { border-bottom: 0.5px solid var(--brd); }
+    .spec-cell:last-child { border-bottom: none; }
+  }
   .spec-label { font-size: 10px; color: var(--tx3); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; margin-bottom: 2px; }
   .spec-val { font-size: 13px; color: var(--tx); font-weight: 500; }
 
@@ -619,12 +626,17 @@
       </button>
     </div>
     <div class="seg">
+      <button onclick="importCSV()" title="CSV Yükle">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 13V5M7 5l-3 3M7 5l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 1h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
       <button onclick="exportCSV()" title="CSV İndir">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M7 9l-3-3M7 9l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </button>
     </div>
   </div>
 </nav>
+
+<input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="handleCSVFile(this)">
 
 <div class="page-header">
   <h1 class="page-title">My Collection.</h1>
@@ -662,8 +674,9 @@
 </div>
 
 <script>
-const CORE_COLS = ['modelAdi','referansNo','seri','mekanizma','kadran','camTipi','kasa','kayis','tarih','ozellikler','fotografUrl'];
-const SPEC_LABELS = { seri:'Seri', mekanizma:'Mekanizma', kadran:'Kadran', camTipi:'Cam', kasa:'Kasa', kayis:'Kayış', tarih:'Satın alma' };
+const CORE_COLS = ['modelAdi','referansNo','seri','tarih','ozellikler','fotografUrl'];
+const DISPLAY_FIRST = ['mekanizma'];
+
 
 let allWatches = [], filtered = [], headers = [], view = 'grid', activeSeri = '';
 
@@ -699,15 +712,46 @@ function parseCSVLine(line) {
 
 async function loadCSV() {
   try {
-    const res = await fetch('data.csv?t=' + Date.now());
-    if (!res.ok) throw new Error('CSV yüklenemedi');
-    const text = await res.text();
+    // Try storage first
+    let text = null;
+    try {
+      const stored = await window.storage.get('casio-csv');
+      if (stored && stored.value) text = stored.value;
+    } catch(e) {}
+
+    // Fall back to data.csv
+    if (!text) {
+      try {
+        const res = await fetch('data.csv?t=' + Date.now());
+        if (res.ok) text = await res.text();
+      } catch(e) {}
+    }
+
+    if (!text) throw new Error('Veri bulunamadı');
     const { hdrs, watches } = parseCSV(text);
     headers = hdrs; allWatches = watches;
     buildSeriFilter(); applyFilters();
   } catch(e) {
-    document.getElementById('watchList').innerHTML = `<div class="empty"><div class="empty-label">data.csv yüklenemedi</div></div>`;
+    document.getElementById('watchList').innerHTML = `<div class="empty"><div class="empty-label">CSV yüklenemedi — import ile CSV yükleyin</div></div>`;
   }
+}
+
+function importCSV() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.csv';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const text = await file.text();
+    try {
+      await window.storage.set('casio-csv', text);
+    } catch(e) {}
+    const { hdrs, watches } = parseCSV(text);
+    headers = hdrs; allWatches = watches;
+    buildSeriFilter(); applyFilters();
+  };
+  input.click();
 }
 
 function buildSeriFilter() {
@@ -849,16 +893,14 @@ function render() {
 
 function openModal(id) {
   const w = allWatches.find(x => x._id === id); if (!w) return;
-  const specEntries = Object.entries(SPEC_LABELS).filter(([k]) => w[k]);
-  const extraCols = headers.filter(h => !CORE_COLS.includes(h) && w[h]);
-
-  const specsHTML = specEntries.map(([k, lbl]) =>
-    `<div class="spec-cell"><div class="spec-label">${lbl}</div><div class="spec-val">${w[k]}</div></div>`
+  const LABELS = { mekanizma:'Mekanizma' };
+  const firstCols = DISPLAY_FIRST.filter(h => w[h]);
+  const restCols = headers.filter(h => !CORE_COLS.includes(h) && !DISPLAY_FIRST.includes(h) && w[h]);
+  const specCols = [...firstCols, ...restCols];
+  const specsHTML = specCols.map(h =>
+    `<div class="spec-cell"><div class="spec-label">${LABELS[h]||h}</div><div class="spec-val">${w[h]}</div></div>`
   ).join('');
-
-  const extraHTML = extraCols.length ? extraCols.map(h =>
-    `<div class="spec-cell"><div class="spec-label">${h}</div><div class="spec-val">${w[h]}</div></div>`
-  ).join('') : '';
+  const extraHTML = '';
 
   const tagsHTML = Array.isArray(w.ozellikler) && w.ozellikler.length ? `
     <div class="feat-section">
@@ -876,7 +918,10 @@ function openModal(id) {
         <div class="modal-name">${w.modelAdi||''}</div>
         <div class="modal-badges">${badges(w, false)}</div>
       </div>
-      <div class="modal-ref">${w.referansNo||''}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div class="modal-ref">${w.referansNo||''}</div>
+        ${w.tarih ? `<div style="font-size:11px;color:var(--tx3);">${w.tarih}</div>` : ''}
+      </div>
       <div class="divider"></div>
       ${tagsHTML}
       <div class="spec-section-title">Teknik Özellikler</div>
