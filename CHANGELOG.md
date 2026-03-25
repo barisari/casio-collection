@@ -13,7 +13,18 @@
 - **Modal:** Tıklanan saatin detay sayfası — fotoğraf, özellik badge'leri, teknik spec grid
 - **CSV Sütunları:** `modelAdi, referansNo, seri, mekanizma, Kadran, Cam, Kasa, Kayış, tarih, ozellikler, fotografUrl`
 
-## 2025-03-25 — Kod temizliği
+## 2026-03-25 — data.csv detaylandırması
+
+- Tüm saatlerin özellik (ozellikler) alanları genişletildi (Saatlik Sinyal, Pil ömrü, Geri Sayım Zamanlayıcı vb.)
+- Bio-Based malzeme bilgisi eklendi (F-91WPC, GW-BX5600, DW-6900RGM kasa/kayış)
+- Mekanizma isimleri Türkçeleştirildi (Analog Chronograph → Analog Kronograf)
+- GST-B1000D mekanizması düzeltildi (Analog-Digital Solar → Analog Solar)
+- Pil ömrü bilgisi eklendi (2, 3, 5, 7, 10 Yıl Pil)
+- DW-6900RGM: Japonya Yapımı, Flaş Alarm gibi detaylar eklendi
+- GM-B2100D: Tough Solar ve Dünya Saati eklendi
+- A1000DN: Dünya Saati kaldırıldı (hatalıydı)
+
+## 2026-03-25 — Kod temizliği
 
 - Kullanılmayan `--mono` CSS değişkeni silindi
 - Gereksiz `[data-theme="dark"] .seg button.on` override kaldırıldı
